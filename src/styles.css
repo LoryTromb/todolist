@@ -549,6 +549,67 @@ p {
   line-height: 1.5;
 }
 
+.todo-actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 4px;
+}
+
+.todo-action {
+  min-height: 30px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 5px;
+  color: #78816d;
+  background: transparent;
+  font-size: 11px;
+}
+
+.todo-action:hover:not(:disabled) {
+  color: #4d5d3d;
+  background: #f0f2ec;
+}
+
+.todo-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.edit-todo-form {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 5px;
+}
+
+.edit-todo-form input {
+  width: 100%;
+  min-width: 0;
+  height: 34px;
+  flex: 1;
+  padding: 0 8px;
+  border: 1px solid #dfe3d8;
+  border-radius: 5px;
+  outline: 0;
+  color: #50554c;
+  font-size: 12px;
+}
+
+.edit-todo-form input:focus {
+  border-color: #85956d;
+}
+
+.save-edit-button {
+  color: #fff;
+  background: #536641;
+}
+
+.save-edit-button:hover:not(:disabled) {
+  color: #fff;
+  background: #435535;
+}
+
 .is-completed .todo-name {
   color: #a3a69f;
   text-decoration: line-through;
@@ -571,6 +632,7 @@ p {
 }
 
 .todo-item:hover .delete-button,
+.todo-item:hover .edit-button,
 .delete-button:focus-visible {
   opacity: 1;
 }
@@ -712,6 +774,10 @@ p {
   }
 
   .delete-button {
+    opacity: 1;
+  }
+
+  .edit-button {
     opacity: 1;
   }
 }

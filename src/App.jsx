@@ -152,6 +152,8 @@ function LoginPage({ onLogin }) {
 
 function TodoPage({ todos, onTodosChange, onLogout }) {
   const [newTodo, setNewTodo] = useState('');
+  const [editingTodoId, setEditingTodoId] = useState(null);
+  const [editedTitle, setEditedTitle] = useState('');
   const [filter, setFilter] = useState('all');
   const remainingCount = todos.filter((todo) => !todo.completed).length;
   const visibleTodos = todos.filter((todo) => {
@@ -178,6 +180,35 @@ function TodoPage({ todos, onTodosChange, onLogout }) {
         todo.id === id ? { ...todo, completed: !todo.completed } : todo,
       ),
     );
+    if (editingTodoId === id) {
+      setEditingTodoId(null);
+      setEditedTitle('');
+    }
+  }
+
+  function startEditing(todo) {
+    if (todo.completed) return;
+    setEditingTodoId(todo.id);
+    setEditedTitle(todo.title);
+  }
+
+  function saveTodo(event, todo) {
+    event.preventDefault();
+    const title = editedTitle.trim();
+    if (todo.completed || !title) return;
+
+    onTodosChange((currentTodos) =>
+      currentTodos.map((currentTodo) =>
+        currentTodo.id === todo.id ? { ...currentTodo, title } : currentTodo,
+      ),
+    );
+    setEditingTodoId(null);
+    setEditedTitle('');
+  }
+
+  function cancelEditing() {
+    setEditingTodoId(null);
+    setEditedTitle('');
   }
 
   function deleteTodo(id) {
@@ -252,15 +283,45 @@ function TodoPage({ todos, onTodosChange, onLogout }) {
                   >
                     {todo.completed && <span aria-hidden="true">✓</span>}
                   </button>
-                  <span className="todo-name">{todo.title}</span>
-                  <button
-                    className="delete-button"
-                    type="button"
-                    aria-label={`Delete ${todo.title}`}
-                    onClick={() => deleteTodo(todo.id)}
-                  >
-                    <span aria-hidden="true">×</span>
-                  </button>
+                  {editingTodoId === todo.id && !todo.completed ? (
+                    <form className="edit-todo-form" onSubmit={(event) => saveTodo(event, todo)}>
+                      <input
+                        aria-label={`Edit ${todo.title}`}
+                        value={editedTitle}
+                        onChange={(event) => setEditedTitle(event.target.value)}
+                        maxLength={200}
+                        autoFocus
+                      />
+                      <button className="todo-action save-edit-button" type="submit" disabled={!editedTitle.trim()}>
+                        Save
+                      </button>
+                      <button className="todo-action" type="button" onClick={cancelEditing}>
+                        Cancel
+                      </button>
+                    </form>
+                  ) : (
+                    <span className="todo-name">{todo.title}</span>
+                  )}
+                  <div className="todo-actions">
+                    {!todo.completed && editingTodoId !== todo.id && (
+                      <button
+                        className="todo-action edit-button"
+                        type="button"
+                        aria-label={`Edit ${todo.title}`}
+                        onClick={() => startEditing(todo)}
+                      >
+                        Edit
+                      </button>
+                    )}
+                    <button
+                      className="delete-button"
+                      type="button"
+                      aria-label={`Delete ${todo.title}`}
+                      onClick={() => deleteTodo(todo.id)}
+                    >
+                      <span aria-hidden="true">×</span>
+                    </button>
+                  </div>
                 </li>
               ))}
             </ul>
